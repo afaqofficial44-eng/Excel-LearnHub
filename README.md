@@ -1,16 +1,39 @@
-# excel_learn_hub
+# 📱 Excel LearnHub
 
-A new Flutter project.
+A simple and modern mobile app built with **Flutter** that helps learners explore and study programming courses easily. Users can browse different coding topics, view course details, and track their learning progress in one place.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## 🚀 Features
 
-A few resources to get you started if this is your first Flutter project:
+* 🔐 **Login & Signup** – Secure user authentication
+* 🏠 **Home Screen** – Explore available programming courses
+* 📚 **Course Details** – View lessons and course information
+* 👤 **Profile Page** – Check user info and learning progress
+* 🔍 **Search & Filter** – Find courses quickly by name or category
+* ⭐ **Bookmark Courses** – Save favorite courses for later
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🧭 App Navigation Flow
+
+```
+Login / Signup → Home (Explore Courses) → Course Details → Profile
+```
+
+---
+
+## 🛠️ Tech Stack
+
+* **Frontend:** Flutter (Dart)
+* **Version Control:** Git & GitHub
+
+---
+
+## 🌟 Project Vision
+
+To make coding education more accessible and engaging for beginners through a clean and easy-to-use mobile app.
+
+---
+
+
