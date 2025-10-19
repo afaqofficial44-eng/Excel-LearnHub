@@ -1,6 +1,8 @@
 import 'package:excel_learn_hub/screens/components/custom_input_field.dart';
 import 'package:excel_learn_hub/screens/components/primary_button.dart';
+import 'package:excel_learn_hub/screens/profile/profile.dart';
 import 'package:flutter/material.dart';
+import 'package:get/route_manager.dart';
 
 class LoginForm extends StatelessWidget {
   const LoginForm({super.key});
@@ -63,9 +65,7 @@ class LoginForm extends StatelessWidget {
             const SizedBox(height: 20.0),
             PrimaryButton(
               text: 'Login',
-              onPressed: () {
-                // Handle Login
-              },
+              onPressed: ()  => Get.to(() =>  ProfileScreen()),
             ),
           ],
         ),

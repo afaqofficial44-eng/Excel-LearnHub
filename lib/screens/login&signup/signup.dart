@@ -57,9 +57,7 @@ class SignUpForm extends StatelessWidget {
             const SizedBox(height: 30.0),
             PrimaryButton(
               text: 'Sign Up',
-              onPressed: () {
-                // Handle Sign Up
-              },
+              onPressed: () {},
             ),
             const SizedBox(height: 15.0),
             Row(

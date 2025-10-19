@@ -1,3 +1,4 @@
+import 'package:excel_learn_hub/screens/components/gradiant_color.dart';
 import 'package:flutter/material.dart';
 
 class LoginSignupToggle extends StatefulWidget {
@@ -36,12 +37,17 @@ class LoginSignupToggleState extends State<LoginSignupToggle> {
         alignment: Alignment.center,
         width: width,
         height: 48,
-        child: Text(
-          text,
-          style: TextStyle(
-            color: isActive ? Colors.black : Color(0xFF6C6C6C),
-            fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
-            fontSize: 16,
+        child: ShaderMask(
+  shaderCallback: (Rect bounds) {
+    return xcelerateGradient.createShader(bounds);
+  },
+          child: Text(
+            text,
+            style: TextStyle(
+              color: isActive ? Colors.white : Colors.white,
+              fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
+              fontSize: 16,
+            ),
           ),
         ),
       ),
