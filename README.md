@@ -38,9 +38,14 @@ To make coding education more accessible and engaging for beginners through a cl
 
 ## Screens
 
-<img src="assets\images\Screenshot_20251019-163057.jpg" alt="Login" width="300" height="200">
-<img src="assets\images\Screenshot_20251019-163100.jpg" alt="SignUp" width="300" height="200">
-<img src="assets\images\Screenshot_20251019-163108.jpg" alt="Home" width="300" height="200">
-<img src="assets\images\Screenshot_20251019-163116.jpg" alt="Profile" width="300" height="200">
-<img src="assets\images\Screenshot_20251019-163126.jpg" alt="Details Screen" width="300" height="200">
-<img src="assets\images\Screenshot_20251019-163132.jpg" alt="Details Screen" width="300" height="200">
+<p align="center">
+  <img src="assets/images/Screenshot_20251019-163057.jpg" alt="Login" width="400">
+  <img src="assets/images/Screenshot_20251019-163100.jpg" alt="SignUp" width="400">
+  <img src="assets/images/Screenshot_20251019-163108.jpg" alt="Home" width="400">
+  <img src="assets/images/Screenshot_20251019-163116.jpg" alt="Profile" width="400">
+  <img src="assets/images/Screenshot_20251019-163126.jpg" alt="Details Screen" width="400">
+  <img src="assets/images/Screenshot_20251019-163132.jpg" alt="Details Screen" width="400">
+</p>
+
+## Demo Link
+[🎥 Watch Demo](https://drive.google.com/file/d/1H5az_0EACvsVxzeqIPR5wjed-0fjBRH7/view?usp=drivesdk)
