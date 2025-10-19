@@ -36,4 +36,11 @@ To make coding education more accessible and engaging for beginners through a cl
 
 ---
 
+## Screens
 
+![alt text](assets/images/Screenshot_20251019-163057.jpg)
+![alt text](assets/images/Screenshot_20251019-163100.jpg)
+![alt text](assets/images/Screenshot_20251019-163108.jpg)
+![alt text](assets/images/Screenshot_20251019-163116.jpg)
+![alt text](assets/images/Screenshot_20251019-163126.jpg)
+![alt text](assets/images/Screenshot_20251019-163132.jpg)
