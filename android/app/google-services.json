@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "452344006673",
+    "project_id": "excel-learn-hub",
+    "storage_bucket": "excel-learn-hub.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:452344006673:android:a6d45a284098e44c7689b0",
+        "android_client_info": {
+          "package_name": "com.example.excel_learn_hub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvxXwOWKG27KmbkLZ_5NgL4ZriOI7pr_o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

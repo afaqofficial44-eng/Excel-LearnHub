@@ -1,10 +1,14 @@
+// lib/screens/home/home_screen.dart
 import 'package:excel_learn_hub/screens/components/gradiant_color.dart';
-import 'package:excel_learn_hub/screens/details/course_detail.view.dart';
-import 'package:excel_learn_hub/screens/home/course_card.dart';
-import 'package:excel_learn_hub/screens/home/dummy_courses.dart';
+import 'package:excel_learn_hub/screens/details/course_detail.logic.dart';
+import 'package:excel_learn_hub/screens/profile/profile_model.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
-
+import '../details/course_detail.view.dart'; 
+import 'course_card.dart'; 
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,32 +18,63 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final String apiUrl = 'https://dummyjson.com/c/cfe0-22d7-4193-b7ec';
+  late Future<List<Course>> futureCourses;
+
   final TextEditingController _searchController = TextEditingController();
   late stt.SpeechToText _speech;
   bool _isListening = false;
 
-  List<Map<String, dynamic>> filteredCourses = [];
+  List<Course> allCourses = [];
+  List<Course> filteredCourses = [];
   String selectedCategory = 'All';
   Set<String> categories = {'All'};
 
-  final Set<String> bookmarkedCourses = {};
-  String username = "Hifsa"; // This should be dynamically fetched if needed
+  // This set will track bookmarked titles for state management
+  final Set<String> bookmarkedTitles = {};
+  String username = "Afaq";
 
   @override
   void initState() {
     super.initState();
     _speech = stt.SpeechToText();
-    categories.addAll(dummyCourses.map((c) => c['category'] as String).toSet());
-    filteredCourses = List.from(dummyCourses);
+    futureCourses = _fetchCourses();
     _searchController.addListener(_filterCourses);
   }
 
+  // --- API FETCH FUNCTION ---
+  Future<List<Course>> _fetchCourses() async {
+    final response = await http.get(Uri.parse(apiUrl));
+
+    if (response.statusCode == 200) {
+      List<dynamic> jsonData = jsonDecode(response.body);
+
+      // Initialize allCourses and bookmarkedTitles from API data
+      allCourses = jsonData.map((item) => Course.fromJson(item)).toList();
+      categories.addAll(allCourses.map((c) => c.category).toSet());
+
+      for (var course in allCourses) {
+        if (course.isBookmarked) {
+          bookmarkedTitles.add(course.title);
+        }
+      }
+
+      // Initial filter to show all courses
+      _filterCourses();
+      return allCourses;
+    } else {
+      throw Exception('Failed to load courses from API.');
+    }
+  }
+
+  // --- FILTERING LOGIC ---
   void _filterCourses() {
     final query = _searchController.text.toLowerCase();
     setState(() {
-      filteredCourses = dummyCourses.where((course) {
-        final matchesCategory = selectedCategory == 'All' || course['category'] == selectedCategory;
-        final matchesSearch = course['title'].toLowerCase().contains(query);
+      filteredCourses = allCourses.where((course) {
+        final matchesCategory =
+            selectedCategory == 'All' || course.category == selectedCategory;
+        final matchesSearch = course.title.toLowerCase().contains(query);
         return matchesCategory && matchesSearch;
       }).toList();
     });
@@ -54,15 +89,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _toggleBookmark(String title) {
     setState(() {
-      if (bookmarkedCourses.contains(title)) {
-        bookmarkedCourses.remove(title);
+      final course = allCourses.firstWhere((c) => c.title == title);
+      course.isBookmarked = !course.isBookmarked;
+
+      if (course.isBookmarked) {
+        bookmarkedTitles.add(title);
       } else {
-        bookmarkedCourses.add(title);
+        bookmarkedTitles.remove(title);
       }
     });
   }
 
+  // --- SPEECH-TO-TEXT LOGIC ---
   Future<void> _listen() async {
+    // ... (Your speech-to-text logic remains the same)
     if (!_isListening) {
       bool available = await _speech.initialize();
       if (available) {
@@ -92,9 +132,26 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return _buildHomeContent();
+    return FutureBuilder<List<Course>>(
+      future: futureCourses,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text('Error loading courses: ${snapshot.error}'),
+          );
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No courses found.'));
+        } else {
+          // Data is loaded, wrap in Material for context
+          return Material(color: Colors.white, child: _buildHomeContent());
+        }
+      },
+    );
   }
 
+  // --- MAIN CONTENT BUILDER ---
   Widget _buildHomeContent() {
     return Padding(
       padding: const EdgeInsets.all(14.0),
@@ -104,14 +161,12 @@ class _HomeScreenState extends State<HomeScreen> {
           // Welcome message and tagline
           Text(
             'Welcome, $username 👋',
-            // Matched to the bold text in the Profile screen
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold), 
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 4),
           Text(
             'Continue your learning journey!',
-            // Matched to the muted text color
-            style: TextStyle(fontSize: 14, color: Colors.grey.shade600), 
+            style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
           ),
           const SizedBox(height: 16),
 
@@ -125,16 +180,20 @@ class _HomeScreenState extends State<HomeScreen> {
                     hintText: 'Search for courses...',
                     hintStyle: TextStyle(color: Colors.grey.shade500),
                     prefixIcon: ShaderMask(
-  shaderCallback: (Rect bounds) {
-    return xcelerateGradient.createShader(bounds);
-  },child: Icon(Icons.search, color: Colors.white)),
-                    // Matched the seamless, rounded look of the Profile UI
+                      shaderCallback: (Rect bounds) {
+                        return xcelerateGradient.createShader(bounds);
+                      },
+                      child: const Icon(Icons.search, color: Colors.white),
+                    ),
                     filled: true,
                     fillColor: Colors.grey.shade200,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: 0.0,
+                      horizontal: 0.0,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none, // Removes the standard outline border
+                      borderSide: BorderSide.none,
                     ),
                   ),
                 ),
@@ -143,16 +202,23 @@ class _HomeScreenState extends State<HomeScreen> {
               // Mic Button
               CircleAvatar(
                 radius: 24,
-                // Use the primary accent color when listening
-                backgroundColor: _isListening ? Color.fromARGB(255, 255, 219, 199) : Colors.grey.shade200, 
+                backgroundColor: _isListening
+                    ? const Color.fromARGB(255, 255, 219, 199)
+                    : Colors.grey.shade200,
                 child: IconButton(
-                  icon: Icon(
-                    _isListening ? Icons.mic : Icons.mic_none,
-                    color: _isListening ? Colors.white : Colors.black54,
+                  icon: ShaderMask(
+                    shaderCallback: (Rect bounds) {
+                      return xcelerateGradient.createShader(bounds);
+                    },
+                    child: Icon(
+                      _isListening ? Icons.mic : Icons.mic_none,
+                      // The color here is only needed for ShaderMask coloring
+                      color: _isListening ? Colors.white : Colors.black54,
+                    ),
                   ),
                   onPressed: _listen,
                 ),
-              )
+              ),
             ],
           ),
           const SizedBox(height: 16),
@@ -167,19 +233,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 return Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: ChoiceChip(
+                    // FIX: Gradient applied to the Text widget
                     label: ShaderMask(
-  shaderCallback: (Rect bounds) {
-    return xcelerateGradient.createShader(bounds);
-  },child: Text(cat)),
+                            shaderCallback: (Rect bounds) {
+                              return xcelerateGradient.createShader(bounds);
+                            },
+                            child: Text(cat),
+                          ),
                     selected: isSelected,
                     onSelected: (_) => _onCategorySelected(cat),
-                    // Use the primary accent color for selection
-                    selectedColor: Color.fromARGB(255, 255, 219, 199), 
+                    selectedColor: const Color.fromARGB(255, 255, 219, 199),
                     backgroundColor: Colors.grey.shade200,
                     labelStyle: TextStyle(
+                      // FIX: Text is white when selected
                       color: isSelected ? Colors.white : Colors.black87,
                       fontWeight: FontWeight.w600,
-                      fontSize: 14, // Slightly smaller font for chips
+                      fontSize: 14,
                     ),
                   ),
                 );
@@ -187,47 +256,54 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          
-          // Added section title for clarity, styled to match bold text
-          Text(
+
+          // Added section title for clarity
+          const Text(
             'Recommended Courses',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
 
-          // Course list - Changed from ListView to GridView for 2 columns
+          // Course list - GridView
           Expanded(
             child: filteredCourses.isEmpty
-                ? const Center(child: Text('No courses found.'))
+                ? const Center(child: Text('No courses found for this filter.'))
                 : GridView.builder(
                     padding: EdgeInsets.zero,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2, // 2 items per row
-                      crossAxisSpacing: 2.0, // Horizontal space between cards
-                      mainAxisSpacing: 2.0, // Vertical space between cards
-                      childAspectRatio: 1.0, // Maintains the square aspect ratio from CourseCard
-                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 10.0,
+                          mainAxisSpacing: 10.0,
+                          childAspectRatio: 1.0,
+                        ),
                     itemCount: filteredCourses.length,
                     itemBuilder: (context, index) {
                       final course = filteredCourses[index];
-                      final title = course['title'] as String;
                       return CourseCard(
-                        title: title,
-                        level: course['level'],
-                        lessons: course['lessons'],
-                        hours: course['hours'],
-                        progress: course['progress'] ?? 0.0,
-                        isBookmarked: bookmarkedCourses.contains(title),
-                        image: course['image'] ,
+                        title: course.title,
+                        level: course.level,
+                        lessons: course.lessons,
+                        hours: course.hours,
+                        progress: course.progress,
+                        // Use the state-tracked set for the bookmarked status
+                        isBookmarked: bookmarkedTitles.contains(course.title),
+                        image: course.image,
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => CourseDetailsView()
+                          // Navigate to Course Details
+                          Get.to(
+                            () => CourseDetailsView(
+                              // Inject the CourseDetailsLogic with the specific course ID
+                              logic: Get.put(
+                                CourseDetailsLogic(courseId: course.id),
+                                tag: 'course_${course.id}',
+                              ),
                             ),
+                            // Optional: Give the route a name for easy debugging
+                            routeName: '/course_detail',
                           );
                         },
-                        onBookmarkToggle: () => _toggleBookmark(title),
+                        onBookmarkToggle: () => _toggleBookmark(course.title),
                       );
                     },
                   ),

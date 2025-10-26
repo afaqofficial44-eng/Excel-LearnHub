@@ -4,26 +4,24 @@ import 'package:flutter/material.dart';
 class CourseCard extends StatelessWidget {
   final String title;
   final String level;
-  final int lessons; // Kept for potential detail view, but not displayed in compact card
-  final int hours; // Kept for potential detail view, but not displayed in compact card
   final double progress;
   final bool isBookmarked;
   final VoidCallback onTap;
   final VoidCallback onBookmarkToggle;
-  final String image;
+  final String image; // Asset path is stored here
 
   const CourseCard({
     super.key,
     required this.title,
     required this.level,
-    required this.lessons,
-    required this.hours,
-    this.progress = 0,
-    this.isBookmarked = false,
+    required this.progress,
+    required this.isBookmarked,
     required this.onTap,
-    required this.onBookmarkToggle, required this.image,
+    required this.onBookmarkToggle,
+    required this.image,
+    required int lessons, // Kept for compatibility but unused
+    required int hours, // Kept for compatibility but unused
   });
-
 
   Color getLevelColor() {
     switch (level.toLowerCase()) {
@@ -38,9 +36,43 @@ class CourseCard extends StatelessWidget {
     }
   }
 
+  // Helper to map image path to an icon for visual representation
+  Widget _buildCourseIcon() {
+    IconData icon;
+    if (image.contains('flutter')) {
+      icon = Icons.mobile_friendly; // Flutter - Mobile App
+    } else if (image.contains('js')) {
+      icon = Icons.javascript; // JavaScript - Web/Programming
+    } else if (image.contains('py')) {
+      icon = Icons.bar_chart; // Python / Data - Analytics
+    } else if (image.contains('node')) {
+      icon = Icons.dns; // Node.js - Backend/Server
+    } else if (image.contains('jp') || image.contains('java')) {
+      icon = Icons.coffee; // Java - Programming
+    } else if (image.contains('kotlin')) {
+      icon = Icons.developer_mode; // Kotlin - Android Dev
+    } else if (image.contains('swift')) {
+      icon = Icons.phone_iphone; // Swift - iOS Dev
+    } else if (image.contains('cpp')) {
+      icon = Icons.code; // C++ - Programming
+    } else if (image.contains('datavis')) {
+      icon = Icons.show_chart; // Data Visualization - Charts
+    } else if (image.contains('django')) {
+      icon = Icons.storage; // Django - Backend Web
+    } else {
+      icon = Icons.school; // Default fallback
+    }
+
+    return ShaderMask(
+      shaderCallback: (Rect bounds) {
+        return xcelerateGradient.createShader(bounds);
+      },
+      child: Icon(icon, size: 48, color: Colors.white),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // We remove the margin here as the parent GridView/Wrap will handle spacing
     return Card(
       color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -48,7 +80,6 @@ class CourseCard extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: onTap,
-        // Use AspectRatio to force the card into a square shape
         child: AspectRatio(
           aspectRatio: 1.0,
           child: Padding(
@@ -63,26 +94,30 @@ class CourseCard extends StatelessWidget {
                     // Level Chip
                     Container(
                       decoration: BoxDecoration(
-                        // Slightly lighter fill for the level chip background
-                        color: getLevelColor().withAlpha((0.2 * 255).toInt()), 
+                        color: getLevelColor().withAlpha((0.2 * 255).toInt()),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
                       child: Text(
                         level,
                         style: TextStyle(
                           color: getLevelColor(),
                           fontWeight: FontWeight.w600,
-                          fontSize: 10, // Small text size for compact card
+                          fontSize: 10,
                         ),
                       ),
                     ),
-                    // Bookmark Button, using purple accent color
+                    // Bookmark Button
                     GestureDetector(
                       onTap: onBookmarkToggle,
                       child: Icon(
                         isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-                        color: isBookmarked ? Color(0xFFFF5200) : Colors.grey.shade400,
+                        color: isBookmarked
+                            ? const Color(0xFFFF5200)
+                            : Colors.grey.shade400,
                         size: 20,
                       ),
                     ),
@@ -92,8 +127,7 @@ class CourseCard extends StatelessWidget {
                 // 2. Center: Picture Placeholder Icon
                 Expanded(
                   child: Center(
-                    // Using a book icon as a central placeholder for the course image
-                    child: Image.asset(image, width: 48, height: 48)
+                    child: _buildCourseIcon(), // Use the helper widget
                   ),
                 ),
 
@@ -107,7 +141,7 @@ class CourseCard extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        fontSize: 10, // Smaller font size for compact card
+                        fontSize: 10,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -115,24 +149,23 @@ class CourseCard extends StatelessWidget {
 
                     // Progress Bar
                     ShaderMask(
-  shaderCallback: (Rect bounds) {
-    return xcelerateGradient.createShader(bounds);
-  },
+                      shaderCallback: (Rect bounds) {
+                        return xcelerateGradient.createShader(bounds);
+                      },
                       child: LinearProgressIndicator(
                         value: progress,
                         backgroundColor: Colors.transparent,
-                        // Using purple accent color for progress
-                        color: Colors.white, 
+                        color: Colors.white,
                         minHeight: 5,
                       ),
                     ),
                     const SizedBox(height: 4),
-                    
+
                     // Progress Percentage
                     Text(
                       '${(progress * 100).toStringAsFixed(0)}% Completed',
                       style: TextStyle(
-                        fontSize: 10, // Smallest font size for detail text
+                        fontSize: 10,
                         color: Colors.grey.shade700,
                       ),
                     ),

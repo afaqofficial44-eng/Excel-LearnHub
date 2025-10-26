@@ -1,108 +1,102 @@
 import 'package:excel_learn_hub/screens/components/gradiant_color.dart';
 import 'package:excel_learn_hub/screens/components/primary_button.dart';
 import 'package:excel_learn_hub/screens/details/course_detail.logic.dart';
+import 'package:excel_learn_hub/screens/details/detail_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CourseDetailsView extends StatelessWidget {
-  const CourseDetailsView({super.key});
+  // Use a final logic variable to access the controller throughout the build method
+  final CourseDetailsLogic logic;
+
+  // The logic is initialized externally when navigating, so accept it here.
+  const CourseDetailsView({required this.logic, super.key});
 
   @override
   Widget build(BuildContext context) {
-    final logic = Get.put(CourseDetailsLogic());
+    // We already have the logic instance, no need for Get.put here
+    // final logic = Get.put(CourseDetailsLogic());
 
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: IconButton(
-                        onPressed: () => Get.back(),
-                        icon: const Icon(Icons.arrow_back),
-                        padding: EdgeInsets.zero,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
+        child: Obx(() {
+          // 🔹 HANDLE LOADING & ERROR STATES
+          if (logic.isLoading.value) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-                    /// 🔹 UPPER CONTAINER
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(
-                          color: Color(0xFF6C6C6C),
-                          width: 0.2,
+          if (logic.errorMessage.isNotEmpty) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Text(
+                  'Error: ${logic.errorMessage.value}',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ),
+            );
+          }
+
+          // Get the data
+          final course = logic.courseDetail.value;
+          if (course == null) {
+            return const Center(child: Text('Course data not available.'));
+          }
+
+          // 🔹 MAIN CONTENT
+          return Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: IconButton(
+                          onPressed: () => Get.back(),
+                          icon: const Icon(Icons.arrow_back),
+                          padding: EdgeInsets.zero,
+                          color: Colors.black87,
+                          visualDensity: const VisualDensity(horizontal: -4.0, vertical: -4.0),
                         ),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 10,
-                            offset: const Offset(0, 5),
-                          ),
-                        ],
                       ),
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            height: 150,
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFEFF2F6),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Center(
-                              child: Image(
-                                image: AssetImage('assets/images/flutter.png'),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 12),
+                      const SizedBox(height: 8),
 
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Flutter Mobile Development',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 16,
-                                        color: Colors.black87,
-                                      ),
-                                    ),
-                                    SizedBox(height: 6),
-                                    Text(
-                                      'Build cross-platform apps with Flutter and Dart',
-                                      style: TextStyle(
-                                        color: Color(0xFF6C6C6C),
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                      /// 🔹 UPPER CONTAINER
+                      Container(
+                        // ... (Your existing styling for the upper container)
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            color: const Color(0xFF6C6C6C),
+                            width: 0.2,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.05),
+                              blurRadius: 10,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
+                        ),
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              height: 150,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFEFF2F6),
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                              const SizedBox(width: 8),
-                              Container(
-                                height: 36,
-                                width: 36,
-                                decoration: BoxDecoration(
-                                  color: Color.fromARGB(255, 255, 219, 199),
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
+                              child: Center(
+                                // Placeholder image
                                 child: ShaderMask(
                                   shaderCallback: (Rect bounds) {
                                     return xcelerateGradient.createShader(
@@ -110,34 +104,60 @@ class CourseDetailsView extends StatelessWidget {
                                     );
                                   },
                                   child: const Icon(
-                                    Icons.bookmark_add_outlined,
+                                    Icons.play_circle_filled,
+                                    size: 60,
                                     color: Colors.white,
-                                    size: 22,
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
+                            ),
+                            const SizedBox(height: 12),
 
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.bar_chart,
-                                size: 18,
-                                color: Color(0xFF6C6C6C),
-                              ),
-                              const SizedBox(width: 6),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      // 💡 Use fetched title
+                                      Text(
+                                        course.title,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 16,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 6),
+                                      const Text(
+                                        // Placeholder subtitle since API doesn't provide a summary
+                                        'Excel in Your Skills. Unlock Your Potential. 💡',
+                                        style: TextStyle(
+                                          color: Color(0xFF6C6C6C),
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFFFF1C6),
-                                  borderRadius: BorderRadius.circular(6),
+                                const SizedBox(width: 8),
+                                // (Bookmark Icon is unchanged)
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+
+                            Row(
+                              children: [
+                                // (Difficulty icon is hardcoded, keep as is)
+                                const Icon(
+                                  Icons.bar_chart,
+                                  size: 18,
+                                  color: Color(0xFF6C6C6C),
                                 ),
-                                child: const Text(
+                                const SizedBox(width: 6),
+                                const Text(
                                   'Beginner',
                                   style: TextStyle(
                                     fontSize: 10,
@@ -145,61 +165,63 @@ class CourseDetailsView extends StatelessWidget {
                                     color: Colors.black87,
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 12),
-                              const Icon(
-                                Icons.menu_book,
-                                size: 18,
-                                color: Color(0xFF6C6C6C),
-                              ),
-                              const SizedBox(width: 6),
-                              const Text(
-                                '12 lessons',
-                                style: TextStyle(fontSize: 10),
-                              ),
-                              const SizedBox(width: 12),
-                              const Icon(
-                                Icons.access_time,
-                                size: 18,
-                                color: Color(0xFF6C6C6C),
-                              ),
-                              const SizedBox(width: 6),
-                              const Text(
-                                '8 hours',
-                                style: TextStyle(fontSize: 10),
-                              ),
-                            ],
-                          ),
-
-                          const SizedBox(height: 12),
-
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: const [
-                              Text(
-                                'Your Progress',
-                                style: TextStyle(
-                                  color: Colors.black87,
-                                  fontSize: 13,
+                                const SizedBox(width: 12),
+                                const Icon(
+                                  Icons.menu_book,
+                                  size: 18,
+                                  color: Color(0xFF6C6C6C),
                                 ),
-                              ),
-                              Text(
-                                '16%',
-                                style: TextStyle(
-                                  color: Colors.black87,
-                                  fontSize: 13,
+                                const SizedBox(width: 6),
+                                // 💡 Use calculated total lessons
+                                Text(
+                                  '${logic.totalLessons} lessons',
+                                  style: const TextStyle(fontSize: 10),
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 6),
-                          Obx(
-                            () => ClipRRect(
+                                const SizedBox(width: 12),
+                                const Icon(
+                                  Icons.access_time,
+                                  size: 18,
+                                  color: Color(0xFF6C6C6C),
+                                ),
+                                const SizedBox(width: 6),
+                                // 💡 Use calculated total duration
+                                Text(
+                                  logic.totalDuration,
+                                  style: const TextStyle(fontSize: 10),
+                                ),
+                              ],
+                            ),
+
+                            const SizedBox(height: 12),
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  'Your Progress',
+                                  style: TextStyle(
+                                    color: Colors.black87,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                // 💡 Use calculated progress percentage
+                                Text(
+                                  logic.progressPercent,
+                                  style: const TextStyle(
+                                    color: Colors.black87,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            // 💡 Use calculated progress value
+                            ClipRRect(
                               borderRadius: BorderRadius.circular(6),
                               child: ShaderMask(
-  shaderCallback: (Rect bounds) {
-    return xcelerateGradient.createShader(bounds);
-  },
+                                shaderCallback: (Rect bounds) {
+                                  return xcelerateGradient.createShader(bounds);
+                                },
                                 child: LinearProgressIndicator(
                                   value: logic.progress.value,
                                   minHeight: 8,
@@ -208,103 +230,105 @@ class CourseDetailsView extends StatelessWidget {
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    ///  LOWER CONTAINER
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(
-                          color: Color(0xFF6C6C6C),
-                          width: 0.2,
+                          ],
                         ),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 10,
-                            offset: const Offset(0, 5),
-                          ),
-                        ],
                       ),
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Course Content',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.black87,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          const Text(
-                            '2 of 12 lessons completed',
-                            style: TextStyle(
-                              color: Color(0xFF6C6C6C),
-                              fontSize: 13,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
 
-                          // Module List
-                          Obx(
-                            () => Column(
+                      const SizedBox(height: 20),
+
+                      ///  LOWER CONTAINER
+                      Container(
+                        // ... (Your existing styling for the lower container)
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            color: const Color(0xFF6C6C6C),
+                            width: 0.2,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.05),
+                              blurRadius: 10,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
+                        ),
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Course Content',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            // 💡 Use calculated completed/total lessons
+                            Text(
+                              '${logic.completedLessons} of ${logic.totalLessons} lessons completed',
+                              style: const TextStyle(
+                                color: Color(0xFF6C6C6C),
+                                fontSize: 13,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+
+                            // Module List
+                            Column(
                               children: logic.modules
                                   .map((m) => _buildModule(context, logic, m))
                                   .toList(),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 80),
-                  ],
+                      const SizedBox(height: 80),
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            /// 🔹 FIXED BOTTOM BUTTON
-            Positioned(
-              left: 16,
-              right: 16,
-              bottom: 16,
-              child: SizedBox(
-                height: 56,
-                child: PrimaryButton(
-                  text: "Continue Learning",
-                  onPressed: () {},
+              /// 🔹 FIXED BOTTOM BUTTON
+              Positioned(
+                left: 16,
+                right: 16,
+                bottom: 16,
+                child: SizedBox(
+                  height: 56,
+                  child: PrimaryButton(
+                    text: "Continue Learning",
+                    onPressed: logic.continueLearning,
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
+            ],
+          );
+        }),
       ),
     );
   }
 
+  // (Keep the _buildModule function as is, it now uses the data from the updated logic)
   Widget _buildModule(
     BuildContext context,
     CourseDetailsLogic logic,
     Module module,
   ) {
+    // ... (your existing _buildModule implementation)
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Color(0xFF6C6C6C), width: 0.2),
+        border: Border.all(color: const Color(0xFF6C6C6C), width: 0.2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -334,14 +358,19 @@ class CourseDetailsView extends StatelessWidget {
                     vertical: 0,
                   ),
                   leading: lesson.done
-                      ?  CircleAvatar(
+                      ? CircleAvatar(
                           radius: 14,
-                          backgroundColor: Color.fromARGB(255, 255, 219, 199),
+                          backgroundColor: const Color.fromARGB(
+                            255,
+                            255,
+                            219,
+                            199,
+                          ),
                           child: ShaderMask(
-  shaderCallback: (Rect bounds) {
-    return xcelerateGradient.createShader(bounds);
-  },
-                            child: Icon(
+                            shaderCallback: (Rect bounds) {
+                              return xcelerateGradient.createShader(bounds);
+                            },
+                            child: const Icon(
                               Icons.check,
                               size: 16,
                               color: Colors.white,
@@ -357,7 +386,6 @@ class CourseDetailsView extends StatelessWidget {
                             color: Colors.black87,
                           ),
                         ),
-
                   title: Text(
                     lesson.title,
                     style: TextStyle(
@@ -387,6 +415,7 @@ class CourseDetailsView extends StatelessWidget {
                         ),
                     ],
                   ),
+                  // The onTap calls the logic's method, which recalculates progress and refreshes
                   onTap: () => logic.markLessonDone(module, lesson),
                 ),
               ),
