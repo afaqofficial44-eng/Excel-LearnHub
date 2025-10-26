@@ -39,13 +39,16 @@ To make coding education more accessible and engaging for beginners through a cl
 ## Screens
 
 <p align="center">
-  <img src="assets/images/Screenshot_20251019-163057.jpg" alt="Login" width="400">
-  <img src="assets/images/Screenshot_20251019-163100.jpg" alt="SignUp" width="400">
-  <img src="assets/images/Screenshot_20251019-163108.jpg" alt="Home" width="400">
-  <img src="assets/images/Screenshot_20251019-163116.jpg" alt="Profile" width="400">
-  <img src="assets/images/Screenshot_20251019-163126.jpg" alt="Details Screen" width="400">
-  <img src="assets/images/Screenshot_20251019-163132.jpg" alt="Details Screen" width="400">
+  <img src="assets\images\IMG-20251027-WA0000.jpg" alt="Login" width="400">
+  <img src="assets\images\IMG-20251027-WA0001.jpg" alt="SignUp" width="400">
+  <img src="assets\images\IMG-20251027-WA0002.jpg" alt="Home" width="400">
+  <img src="assets\images\IMG-20251027-WA0003.jpg" alt="Profile" width="400">
+  <img src="assets\images\IMG-20251027-WA0004.jpg" alt="Details Screen" width="400">
+  <img src="assets\images\IMG-20251027-WA0005.jpg" alt="Details Screen" width="400">
+  <img src="assets\images\IMG-20251027-WA0006.jpg" alt="Details Screen" width="400">
+  <img src="assets\images\IMG-20251027-WA0007.jpg" alt="Details Screen" width="400">
+  <img src="assets\images\IMG-20251027-WA0008.jpg" alt="Details Screen" width="400">
 </p>
 
 ## Demo Link
-[🎥 Watch Demo](https://drive.google.com/file/d/1H5az_0EACvsVxzeqIPR5wjed-0fjBRH7/view?usp=drivesdk)
+[🎥 Watch Demo](https://drive.google.com/file/d/1Ph6AtaoYWJOhmHKaci21iGIfF2zAfd8o/view?usp=drivesdk)
