@@ -1,7 +1,7 @@
-import 'package:excel_learn_hub/screens/components/gradiant_color.dart';
+import 'package:excel_learn_hub/widgets/gradiant_color.dart';
 import 'package:excel_learn_hub/screens/home/home_screen.dart';
+import 'package:excel_learn_hub/models/course_model.dart';
 import 'package:excel_learn_hub/screens/login&signup/toggle_screen.dart';
-import 'package:excel_learn_hub/screens/profile/profile_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';

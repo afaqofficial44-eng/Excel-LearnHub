@@ -1,4 +1,4 @@
-import 'package:excel_learn_hub/screens/components/gradiant_color.dart';
+import 'package:excel_learn_hub/widgets/gradiant_color.dart';
 import 'package:flutter/material.dart';
 
 class PrimaryButton extends StatelessWidget {

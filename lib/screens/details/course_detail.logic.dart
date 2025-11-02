@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:excel_learn_hub/screens/details/detail_model.dart';
+import 'package:excel_learn_hub/models/detail_model.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 

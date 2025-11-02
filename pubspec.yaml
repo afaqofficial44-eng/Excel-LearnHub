@@ -40,6 +40,7 @@ dependencies:
   firebase_core: ^4.2.0
   firebase_auth: ^6.1.1
   shared_preferences: ^2.5.3
+  flutter_native_splash: ^2.4.7
 
 dev_dependencies:
   flutter_test:
@@ -93,3 +94,15 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/images/splash.png
+  android: true
+  ios: true
+  web: false
+
+  android_12:
+    image: assets/images/splash.png
+    icon_background_color: "#ffffff"
+    branding_android: assets/images/splash2.png

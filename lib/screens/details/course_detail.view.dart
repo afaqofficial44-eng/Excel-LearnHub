@@ -1,7 +1,7 @@
-import 'package:excel_learn_hub/screens/components/gradiant_color.dart';
-import 'package:excel_learn_hub/screens/components/primary_button.dart';
+import 'package:excel_learn_hub/widgets/gradiant_color.dart';
+import 'package:excel_learn_hub/widgets/primary_button.dart';
 import 'package:excel_learn_hub/screens/details/course_detail.logic.dart';
-import 'package:excel_learn_hub/screens/details/detail_model.dart';
+import 'package:excel_learn_hub/models/detail_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

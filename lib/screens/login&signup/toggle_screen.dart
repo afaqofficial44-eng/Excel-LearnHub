@@ -1,4 +1,4 @@
-import 'package:excel_learn_hub/screens/components/gradiant_color.dart';
+import 'package:excel_learn_hub/widgets/gradiant_color.dart';
 import 'package:excel_learn_hub/screens/login&signup/login.dart';
 import 'package:excel_learn_hub/screens/login&signup/login_signup_toggle.dart';
 import 'package:excel_learn_hub/screens/login&signup/signup.dart';
